@@ -1,215 +1,235 @@
 class ladiFormControl {
 	constructor(remoteSelector, controlSelector) {
+		this.controlSelector = controlSelector?.form
+			? document.querySelector(controlSelector.form)
+			: document.querySelector(".f-main--control");
 		this.control = {
-			selector: controlSelector?.form
-				? document.querySelector(controlSelector.form)
-				: document.querySelector(".f-main--control"),
 			fullName: controlSelector?.fullName
-				? document.querySelector(controlSelector.fullName)
-				: document.querySelector(".f-main--full_name"),
+				? this.controlSelector.querySelector(controlSelector.fullName)
+				: this.controlSelector.querySelector(".f-main--full_name"),
 			phone: controlSelector?.phone
-				? document.querySelector(controlSelector.phone)
-				: document.querySelector(".f-main--phone"),
+				? this.controlSelector.querySelector(controlSelector.phone)
+				: this.controlSelector.querySelector(".f-main--phone"),
 			email: controlSelector?.email
-				? document.querySelector(controlSelector.email)
-				: document.querySelector(".f-main--email"),
+				? this.controlSelector.querySelector(controlSelector.email)
+				: this.controlSelector.querySelector(".f-main--email"),
 			classId: controlSelector?.classId
-				? document.querySelector(controlSelector.classId)
-				: document.querySelector(".f-main--classid"),
+				? this.controlSelector.querySelector(controlSelector.classId)
+				: this.controlSelector.querySelector(".f-main--classid"),
 			age: controlSelector?.age
-				? document.querySelector(controlSelector.age)
-				: document.querySelector(".f-main--age"),
+				? this.controlSelector.querySelector(controlSelector.age)
+				: this.controlSelector.querySelector(".f-main--age"),
 			scores: controlSelector?.scores
-				? document.querySelector(controlSelector.scores)
-				: document.querySelector(".f-main--scores"),
+				? this.controlSelector.querySelector(controlSelector.scores)
+				: this.controlSelector.querySelector(".f-main--scores"),
 			product: controlSelector?.product
-				? document.querySelector(controlSelector.product)
-				: document.querySelector(".f-main--product"),
+				? this.controlSelector.querySelector(controlSelector.product)
+				: this.controlSelector.querySelector(".f-main--product"),
 			gift: controlSelector?.gift
-				? document.querySelector(controlSelector.gift)
-				: document.querySelector(".f-main--gift"),
+				? this.controlSelector.querySelector(controlSelector.gift)
+				: this.controlSelector.querySelector(".f-main--gift"),
 			timeSlot: controlSelector?.timeSlot
-				? document.querySelector(controlSelector.timeSlot)
-				: document.querySelector(".f-main--timeslot"),
+				? this.controlSelector.querySelector(controlSelector.timeSlot)
+				: this.controlSelector.querySelector(".f-main--timeslot"),
 			address: controlSelector?.address
-				? document.querySelector(controlSelector.address)
-				: document.querySelector(".f-main--address"),
+				? this.controlSelector.querySelector(controlSelector.address)
+				: this.controlSelector.querySelector(".f-main--address"),
 			note1: controlSelector?.note1
-				? document.querySelector(controlSelector.note1)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note1)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note2: controlSelector?.note2
-				? document.querySelector(controlSelector.note2)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note2)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note3: controlSelector?.note3
-				? document.querySelector(controlSelector.note3)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note3)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note4: controlSelector?.note4
-				? document.querySelector(controlSelector.note4)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note4)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note5: controlSelector?.note5
-				? document.querySelector(controlSelector.note5)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note5)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note5: controlSelector?.note5
-				? document.querySelector(controlSelector.note5)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note5)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note5: controlSelector?.note5
-				? document.querySelector(controlSelector.note5)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note5)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			note5: controlSelector?.note5
-				? document.querySelector(controlSelector.note5)
-				: document.querySelector(".f-main--note1"),
+				? this.controlSelector.querySelector(controlSelector.note5)
+				: this.controlSelector.querySelector(".f-main--note1"),
 			isStudent: controlSelector?.IsStudent
-				? document.querySelector(controlSelector.IsStudent)
-				: document.querySelector(".f-main--is_student"),
+				? this.controlSelector.querySelector(controlSelector.IsStudent)
+				: this.controlSelector.querySelector(".f-main--is_student"),
 			itemProductType: controlSelector?.itemProductType
-				? document.querySelector(controlSelector.itemProductType)
-				: document.querySelector(".f-main--item_product_type"),
+				? this.controlSelector.querySelector(controlSelector.itemProductType)
+				: this.controlSelector.querySelector(".f-main--item_product_type"),
 			itemPrice: controlSelector?.itemPrice
-				? document.querySelector(controlSelector.itemPrice)
-				: document.querySelector(".f-main--item_price"),
+				? this.controlSelector.querySelector(controlSelector.itemPrice)
+				: this.controlSelector.querySelector(".f-main--item_price"),
 			itemProductId: controlSelector?.itemProductId
-				? document.querySelector(controlSelector.itemProductId)
-				: document.querySelector(".f-main--item_product_id"),
+				? this.controlSelector.querySelector(controlSelector.itemProductId)
+				: this.controlSelector.querySelector(".f-main--item_product_id"),
 			address: controlSelector?.address
-				? document.querySelector(controlSelector.address)
-				: document.querySelector(".f-main--return_url_true"),
+				? this.controlSelector.querySelector(controlSelector.address)
+				: this.controlSelector.querySelector(".f-main--return_url_true"),
 			landingPageId: controlSelector?.landingPageId
-				? document.querySelector(controlSelector.landingPageId)
-				: document.querySelector(".f-main--landing_page_id"),
+				? this.controlSelector.querySelector(controlSelector.landingPageId)
+				: this.controlSelector.querySelector(".f-main--landing_page_id"),
 			returnUrlFalse: controlSelector?.returnUrlFalse
-				? document.querySelector(controlSelector.returnUrlFalse)
-				: document.querySelector(".f-main--return_url_false"),
+				? this.controlSelector.querySelector(controlSelector.returnUrlFalse)
+				: this.controlSelector.querySelector(".f-main--return_url_false"),
 			amount: controlSelector?.amount
-				? document.querySelector(controlSelector.amount)
-				: document.querySelector(".f-main--amount"),
+				? this.controlSelector.querySelector(controlSelector.amount)
+				: this.controlSelector.querySelector(".f-main--amount"),
 			voucherCode: controlSelector?.voucherCode
-				? document.querySelector(controlSelector.voucherCode)
-				: document.querySelector(".f-main--voucher_code"),
+				? this.controlSelector.querySelector(controlSelector.voucherCode)
+				: this.controlSelector.querySelector(".f-main--voucher_code"),
 			ldp: controlSelector?.ldp
-				? document.querySelector(controlSelector.ldp)
-				: document.querySelector(".f-main--ldp"),
+				? this.controlSelector.querySelector(controlSelector.ldp)
+				: this.controlSelector.querySelector(".f-main--ldp"),
 			utmCampaign: controlSelector?.utmCampaign
-				? document.querySelector(controlSelector.utmCampaign)
-				: document.querySelector(".f-main--utm_campaign"),
+				? this.controlSelector.querySelector(controlSelector.utmCampaign)
+				: this.controlSelector.querySelector(".f-main--utm_campaign"),
 			utmMedium: controlSelector?.utmMedium
-				? document.querySelector(controlSelector.utmMedium)
-				: document.querySelector(".f-main--utm_medium"),
+				? this.controlSelector.querySelector(controlSelector.utmMedium)
+				: this.controlSelector.querySelector(".f-main--utm_medium"),
 			line: controlSelector?.line
-				? document.querySelector(controlSelector.line)
-				: document.querySelector(".f-main--line"),
+				? this.controlSelector.querySelector(controlSelector.line)
+				: this.controlSelector.querySelector(".f-main--line"),
 		};
 
 		//
+
+		this.remoteSelector = remoteSelector?.form ? remoteSelector.form : ".f-remote";
 		this.remote = {
-			remoteSelector: remoteSelector?.form
-				? document.querySelectorAll(remoteSelector.form)
-				: document.querySelectorAll(".f-remote"),
-			remoteFullName: remoteSelector?.fullName
-				? document.querySelectorAll(remoteSelector.fullName)
-				: document.querySelectorAll(".f-remote--full_name"),
-			remotePhone: remoteSelector?.phone
-				? document.querySelectorAll(remoteSelector.phone)
-				: document.querySelectorAll(".f-remote--phone"),
-			remoteEmail: remoteSelector?.email
-				? document.querySelectorAll(remoteSelector.email)
-				: document.querySelectorAll(".f-remote--email"),
-			remoteClassId: remoteSelector?.classId
-				? document.querySelectorAll(remoteSelector.classId)
-				: document.querySelectorAll(".f-remote--classid"),
-			remoteAge: remoteSelector?.age
-				? document.querySelectorAll(remoteSelector.age)
-				: document.querySelectorAll(".f-remote--age"),
-			remoteScores: remoteSelector?.scores
-				? document.querySelectorAll(remoteSelector.scores)
-				: document.querySelectorAll(".f-remote--scores"),
-			remoteProduct: remoteSelector?.product
-				? document.querySelectorAll(remoteSelector.product)
-				: document.querySelectorAll(".f-remote--product"),
-			remoteGift: remoteSelector?.gift
-				? document.querySelectorAll(remoteSelector.gift)
-				: document.querySelectorAll(".f-remote--gift"),
-			remoteTimeSlot: remoteSelector?.timeSlot
-				? document.querySelectorAll(remoteSelector.timeSlot)
-				: document.querySelectorAll(".f-remote--timeslot"),
-			remoteAddress: remoteSelector?.address
-				? document.querySelectorAll(remoteSelector.address)
-				: document.querySelectorAll(".f-remote--address"),
-                note1: remoteSelector?.note1
-				? document.querySelector(remoteSelector.note1)
-				: document.querySelector(".f-remote--note1"),
-			note2: remoteSelector?.note2
-				? document.querySelector(remoteSelector.note2)
-				: document.querySelector(".f-remote--note1"),
-			note3: remoteSelector?.note3
-				? document.querySelector(remoteSelector.note3)
-				: document.querySelector(".f-remote--note1"),
-			note4: remoteSelector?.note4
-				? document.querySelector(remoteSelector.note4)
-				: document.querySelector(".f-remote--note1"),
-			note5: remoteSelector?.note5
-				? document.querySelector(remoteSelector.note5)
-				: document.querySelector(".f-remote--note1"),
-			note5: remoteSelector?.note5
-				? document.querySelector(remoteSelector.note5)
-				: document.querySelector(".f-remote--note1"),
-			note5: remoteSelector?.note5
-				? document.querySelector(remoteSelector.note5)
-				: document.querySelector(".f-remote--note1"),
-			note5: remoteSelector?.note5
-				? document.querySelector(remoteSelector.note5)
-				: document.querySelector(".f-remote--note1"),
-			isStudent: remoteSelector?.IsStudent
-				? document.querySelector(remoteSelector.IsStudent)
-				: document.querySelector(".f-remote--is_student"),
-			itemProductType: remoteSelector?.itemProductType
-				? document.querySelector(remoteSelector.itemProductType)
-				: document.querySelector(".f-remote--item_product_type"),
-			itemPrice: remoteSelector?.itemPrice
-				? document.querySelector(remoteSelector.itemPrice)
-				: document.querySelector(".f-remote--item_price"),
-			itemProductId: remoteSelector?.itemProductId
-				? document.querySelector(remoteSelector.itemProductId)
-				: document.querySelector(".f-remote--item_product_id"),
+			fullName: remoteSelector?.fullName
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.fullName}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--full_name`),
+			phone: remoteSelector?.phone
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.phone}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--phone`),
+			email: remoteSelector?.email
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.email}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--email`),
+			classId: remoteSelector?.classId
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.classId}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--classid`),
+			age: remoteSelector?.age
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.age}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--age`),
+			scores: remoteSelector?.scores
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.scores}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--scores`),
+			product: remoteSelector?.product
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.product}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--product`),
+			gift: remoteSelector?.gift
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.gift}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--gift`),
+			timeSlot: remoteSelector?.timeSlot
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.timeSlot}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--timeslot`),
 			address: remoteSelector?.address
-				? document.querySelector(remoteSelector.address)
-				: document.querySelector(".f-remote--return_url_true"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.address}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--address`),
+			note1: remoteSelector?.note1
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note1}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note2: remoteSelector?.note2
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note2}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note3: remoteSelector?.note3
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note3}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note4: remoteSelector?.note4
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note4}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note5: remoteSelector?.note5
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note5}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note5: remoteSelector?.note5
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note5}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note5: remoteSelector?.note5
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note5}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			note5: remoteSelector?.note5
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.note5}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--note1`),
+			isStudent: remoteSelector?.IsStudent
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.IsStudent}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--is_student`),
+			itemProductType: remoteSelector?.itemProductType
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.itemProductType}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--item_product_type`),
+			itemPrice: remoteSelector?.itemPrice
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.itemPrice}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--item_price`),
+			itemProductId: remoteSelector?.itemProductId
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.itemProductId}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--item_product_id`),
+			address: remoteSelector?.address
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.address}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--return_url_true`),
 			landingPageId: remoteSelector?.landingPageId
-				? document.querySelector(remoteSelector.landingPageId)
-				: document.querySelector(".f-remote--landing_page_id"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.landingPageId}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--landing_page_id`),
 			returnUrlFalse: remoteSelector?.returnUrlFalse
-				? document.querySelector(remoteSelector.returnUrlFalse)
-				: document.querySelector(".f-remote--return_url_false"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.returnUrlFalse}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--return_url_false`),
 			amount: remoteSelector?.amount
-				? document.querySelector(remoteSelector.amount)
-				: document.querySelector(".f-remote--amount"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.amount}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--amount`),
 			voucherCode: remoteSelector?.voucherCode
-				? document.querySelector(remoteSelector.voucherCode)
-				: document.querySelector(".f-remote--voucher_code"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.voucherCode}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--voucher_code`),
 			ldp: remoteSelector?.ldp
-				? document.querySelector(remoteSelector.ldp)
-				: document.querySelector(".f-remote--ldp"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.ldp}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--ldp`),
 			utmCampaign: remoteSelector?.utmCampaign
-				? document.querySelector(remoteSelector.utmCampaign)
-				: document.querySelector(".f-remote--utm_campaign"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.utmCampaign}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--utm_campaign`),
 			utmMedium: remoteSelector?.utmMedium
-				? document.querySelector(remoteSelector.utmMedium)
-				: document.querySelector(".f-remote--utm_medium"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.utmMedium}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--utm_medium`),
 			line: remoteSelector?.line
-				? document.querySelector(remoteSelector.line)
-				: document.querySelector(".f-remote--line"),
+				? document.querySelectorAll(`${this.remoteSelector} ${remoteSelector.line}`)
+				: document.querySelectorAll(`${this.remoteSelector} .f-remote--line`),
 		};
 	}
 
-
 	addChangeEvent() {
-        for (selector of this.remote) {
-            if (selector) {
-                let inputSl = selector.querySelector("input")
-                if (inputSl) { input = selector.querySelector("select")}
-                inputSl.addEventListener('change', (e) => {
-                    console.log(e.target.value) 
-                });
-            }
-        }
-    }
+		for (const key in this.remote) {
+			if (this.remote[key]) {
+				for (const ele of this.remote[key]) {
+					let iEle = this.getInput(ele);
+					iEle.addEventListener("change", (e) => {
+						this.changeValue(e.target.value, this.getInput(this.control[key]));
+                        this.changeValueFormControl()
+					});
+				}
+			}
+		}
+	}
+	changeValue(value, target) {
+		target.value = value;
+	}
+	changeValueFormControl() {
+		for (const key in this.control) {
+			if (this.control[key]) {
+				let value = this.getInput(this.control[key]).value;
+				if (value !== "") {
+					for (const ele of this.remote[key]) this.changeValue(value, this.getInput(ele));
+				}
+			}
+		}
+	}
+	getInput(selector) {
+		// console.log(selector);
+		return selector.querySelector("input") ? selector.querySelector("input") : selector.querySelector("select");
+	}
+	log(data) {
+		console.log(this.remote);
+	}
 }
