@@ -106,9 +106,9 @@ class ladiFormControl {
 		for (const key in this.controlSelector) {
 			if (this.controlSelector[key]) {
 				let value = this.getInput(this.controlSelector[key]).value;
-				if (value !== "") {
+				// if (value !== "") {
 					for (const ele of this.remoteSelector[key]) this.changeValue(value, this.getInput(ele));
-				}
+				// }
 			}
 		}
 	}
