@@ -198,19 +198,18 @@ class ladiFormControl {
 	changeDataSwitch(key) {
 		const keyObj = this.getKey(this.controlFormName, key);
 		// console.log(this.defaultSelector)
-		const selectors = this.switchSelector.filter((i) => i.key === key);
-		const data = this.switchData.filter((data) => data.key);
 		const value = this.getInput(this.controlSelector[keyObj]).value;
-		for (const iData of data) {
-			for (const iValue of iData.data) {
+		const get = this.switchData.filter((data) => data.key === key);
+		const pushTo = get.map((i) => i.pushTo);
+		for (const iPushTo of pushTo) {
+			const data = this.switchData.find((data) => data.key === key && data.pushTo === iPushTo);
+			const selectors = this.switchSelector.find((i) => i.key === key && i.pushTo === iPushTo);
+			for (const iValue of data.data) {
 				if (iValue.value === value) {
-					for ( const iSelector of selectors ) {
-						for (const selector of iSelector.doms) {
-							selector.innerText = iValue.text;
-						}
+					for (const selector of selectors.doms) {
+						selector.innerText = iValue.text;
 					}
-					}
-					
+				}
 			}
 		}
 	}
