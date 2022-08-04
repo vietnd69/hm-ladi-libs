@@ -13,9 +13,10 @@ class ladiFormControl {
 				: this.defaultRemotePrefix + "control"
 			: this.defaultRemotePrefix + "control";
 		this.submitFormId = document.querySelector(this.controlFormSelector).getAttribute("id");
-		this.triggerFormSubmitSelector = option.submitSelector ? option.submitSelector : this.defaultMainPrefix + "submit"
+		this.triggerFormSubmitSelector = option.submitSelector
+			? option.submitSelector
+			: this.defaultMainPrefix + "submit";
 		this.defaultSelector = {
-			remote: "child",
 			fullName: "full_name",
 			phone: "phone",
 			email: "email",
@@ -48,6 +49,9 @@ class ladiFormControl {
 		this.cacheValue = {};
 		this.controlSelector = {};
 		this.remoteSelector = {};
+		this.controlFormName = {};
+		this.switchSelector = [];
+		this.switchData = [];
 		for (const key in this.defaultSelector) {
 			// console.log("run");
 			this.controlSelector[key] = option.controlSelector
@@ -61,6 +65,7 @@ class ladiFormControl {
 						"one",
 						`${this.controlFormSelector} ${this.defaultMainPrefix + this.defaultSelector[key]}`
 				  );
+
 			this.remoteSelector[key] = option.remoteSelector
 				? remoteSelector[key]
 					? this.queryDom("all", `${this.remoteFormSelector} ${option.remoteSelector[key]}`)
@@ -72,6 +77,19 @@ class ladiFormControl {
 						"all",
 						`${this.remoteFormSelector} ${this.defaultRemotePrefix + this.defaultSelector[key]}`
 				  );
+		}
+		for (const key in this.controlSelector) {
+			// console.log(this.controlSelector[key])
+			try {
+				this.cacheValue[key] = this.controlSelector[key]
+					? this.getInput(this.controlSelector[key]).value
+					: null;
+				this.controlFormName[key] = this.controlSelector[key]
+					? this.getInput(this.controlSelector[key]).getAttribute("name")
+					: null;
+			} catch (e) {
+				console.log(e);
+			}
 		}
 		this.addChangeEvent();
 		this.addSubmitMainFormEvent();
@@ -86,6 +104,12 @@ class ladiFormControl {
 						this.cacheValue[key] = e.target.value;
 						this.changeValue(e.target.value, this.getInput(this.controlSelector[key]));
 						this.changeValueFormControl();
+						for (const switchData of this.switchData) {
+							console.log(switchData.key, this.defaultSelector[key]);
+							if (switchData.key === this.defaultSelector[key]) {
+								this.changeDataSwitch(switchData.key);
+							}
+						}
 					});
 				}
 			}
@@ -105,10 +129,12 @@ class ladiFormControl {
 	changeValueFormControl() {
 		for (const key in this.controlSelector) {
 			if (this.controlSelector[key]) {
-				let value = this.getInput(this.controlSelector[key]).value;
-				// if (value !== "") {
-					for (const ele of this.remoteSelector[key]) this.changeValue(value, this.getInput(ele));
-				// }
+				let value = this.cacheValue[key];
+				for (const ele of this.remoteSelector[key]) {
+					if (this.getInput(ele).value !== value) {
+						this.changeValue(value, this.getInput(ele));
+					}
+				}
 			}
 		}
 	}
@@ -137,6 +163,55 @@ class ladiFormControl {
 			ladi(selector).submit();
 		} catch (e) {
 			console.log(e);
+		}
+	}
+	addSwitchData(key, pushTo, data) {
+		this.switchData.push({ key, pushTo, data });
+		const keyCode = "{$" + pushTo + "$}";
+		const selectorP = document.getElementsByTagName("p");
+		const selectorH3 = document.getElementsByTagName("h3");
+		let doms = [];
+		for (const dom of selectorP) {
+			if (dom.textContent === keyCode) {
+				doms.push(dom);
+				dom.textContent = "";
+			}
+		}
+		for (const dom of selectorH3) {
+			if (dom.textContent === keyCode) {
+				doms.push(dom);
+				dom.textContent = "";
+			}
+		}
+		this.switchSelector.push({ key, pushTo, doms });
+		this.changeDataSwitch(key);
+	}
+	getKey(obj, value) {
+		for (const key in obj) {
+			// console.log(key, value)
+			if (obj[key] === value) {
+				return key;
+			}
+		}
+		return false;
+	}
+	changeDataSwitch(key) {
+		const keyObj = this.getKey(this.controlFormName, key);
+		// console.log(this.defaultSelector)
+		const selectors = this.switchSelector.filter((i) => i.key === key);
+		const data = this.switchData.filter((data) => data.key);
+		const value = this.getInput(this.controlSelector[keyObj]).value;
+		for (const iData of data) {
+			for (const iValue of iData.data) {
+				if (iValue.value === value) {
+					for ( const iSelector of selectors ) {
+						for (const selector of iSelector.doms) {
+							selector.innerText = iValue.text;
+						}
+					}
+					}
+					
+			}
 		}
 	}
 }
