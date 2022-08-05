@@ -404,7 +404,7 @@ class ladiTabControl {
 		this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-headline`, this.activeTextStyle);
 
 		this.addClickEvent();
-		this.checkChangeTab()
+		this.checkChangeTab();
 	}
 	checkChangeTab() {
 		for (const boxTab of this.boxTabEle) {
@@ -414,19 +414,19 @@ class ladiTabControl {
 			console.log(activeTab);
 		}
 	}
-	unSelectedAllBtn() {
-		for (const tabBtn of this.boxTabRemoteEle) {
-			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element.selected[data-action]");
-			for (const btn of buttons) {
-				btn.classList.remove("selected");
-			}
+	unSelectedAllBtn(tabBtn) {
+		const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element.selected[data-action]");
+		for (const btn of buttons) {
+			btn.classList.remove("selected");
 		}
 	}
 	activeBtnWithIndex(index) {
 		for (const tabBtn of this.boxTabRemoteEle) {
 			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
-			this.unSelectedAllBtn();
-			buttons[index - 1].classList.add("selected");
+			this.unSelectedAllBtn(tabBtn);
+			if (buttons[index - 1]) {
+				buttons[index - 1].classList.add("selected");
+			}
 		}
 	}
 	addClickEvent() {
