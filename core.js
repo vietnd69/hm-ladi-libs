@@ -386,6 +386,10 @@ class ladiTabControl {
 		this.boxTabRemoteEle = document.querySelectorAll(boxTabRemote);
 		this.activeBtnEle = document.querySelector(activeSelector);
 
+		this.styleId = "hm-style";
+		this.setStyleTag();
+		this.styleEle;
+
 		this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
 		this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
 
@@ -397,22 +401,62 @@ class ladiTabControl {
 		this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
 		this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
 
-		this.addGlobalStyle(
-			`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-headline`,
-			this.activeTextStyle
-		);
+		this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-headline`, this.activeTextStyle);
+
+		this.addClickEvent();
+		this.checkChangeTab()
+	}
+	checkChangeTab() {
+		for (const boxTab of this.boxTabEle) {
+			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
+			const activeTab = this.getTabActive(tabs);
+			this.activeBtnWithIndex(activeTab);
+			console.log(activeTab);
+		}
+	}
+	unSelectedAllBtn() {
+		for (const tabBtn of this.boxTabRemoteEle) {
+			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element.selected[data-action]");
+			for (const btn of buttons) {
+				btn.classList.remove("selected");
+			}
+		}
+	}
+	activeBtnWithIndex(index) {
+		for (const tabBtn of this.boxTabRemoteEle) {
+			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
+			this.unSelectedAllBtn();
+			buttons[index - 1].classList.add("selected");
+		}
+	}
+	addClickEvent() {
+		for (const boxTab of this.boxTabRemoteEle) {
+			boxTab.addEventListener("click", () => this.checkChangeTab());
+		}
+	}
+	getTabActive(tabs) {
+		for (const tab of tabs) {
+			if (tab.classList.contains("selected")) {
+				return tab.getAttribute("data-index");
+			}
+		}
+		return null;
 	}
 	addGlobalStyle(selector, style) {
-		console.log("run");
-		const styleEle = document.createElement("style");
-		styleEle.innerHTML = `${selector} {
+		this.styleEle.innerHTML += `${selector} {
 			${style}
 		}`;
+	}
+	setStyleTag() {
+		const styleEle = document.createElement("style");
+		styleEle.setAttribute("id", this.styleId);
 		document.head.appendChild(styleEle);
+		this.styleEle = document.getElementById(this.styleId);
 	}
 	getStyle(selector, stylesName) {
 		const selectorStyle = window.getComputedStyle(selector);
 		const styles = stylesName.map((styleName) => `${styleName}: ${selectorStyle.getPropertyValue(styleName)} !important`);
+		// console.log(styles);
 		return styles.join(";");
 	}
 }
