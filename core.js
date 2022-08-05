@@ -1,21 +1,181 @@
+// override ladi script
+LadiPageLibraryV2.prototype.value = function (t, e, i) {
+	var a = this.doc || document.getElementById(this.id);
+	if (!LadiPageScript.isEmpty(a)) {
+		var n = [],
+			o = !1,
+			r = 0,
+			s = LadiPageScript.isArray(t) ? t : [t],
+			l = a.querySelectorAll('.ladi-form-item > [data-is-select-country="true"]');
+		if (4 == l.length)
+			if (LadiPageScript.isNull(t)) {
+				for (r = 0; r < l.length; r++) n.push(l[r].value);
+				o = !0;
+			} else
+				s.forEach(function (t, e) {
+					LadiPageScript.isEmpty(l[e]) || ((l[e].value = t), LadiPageScript.fireEvent(l[e], "change"));
+				});
+		else {
+			var d = document.querySelectorAll(
+					"#" +
+						this.id +
+						" > ." +
+						["ladi-button .ladi-headline", "ladi-headline", "ladi-paragraph", "ladi-list-paragraph"].join(
+							", #" + this.id + " > ."
+						)
+				),
+				c = document.querySelectorAll(
+					"#" +
+						this.id +
+						" > ." +
+						[
+							"ladi-form-item-container .ladi-form-item > input",
+							"ladi-form-item-container .ladi-form-item > textarea",
+							"ladi-form-item-container .ladi-form-item > select",
+						].join(", #" + this.id + " > .")
+				),
+				p = document.querySelectorAll(
+					"#" +
+						this.id +
+						" > ." +
+						["ladi-form-item-container .ladi-form-checkbox-item > input"].join(", #" + this.id + " > .")
+				),
+				u = document.querySelectorAll("#" + this.id + " > .ladi-image .ladi-image-background"),
+				m = document.querySelectorAll("#" + this.id + " > .ladi-video"),
+				_ = document.querySelectorAll("#" + this.id + " > .ladi-survey > .ladi-survey-option"),
+				y = function (t) {
+					var e = [];
+					return (
+						LadiPageScript.isArray(t) &&
+							t.forEach(function (t) {
+								e.push(t.name);
+							}),
+						(e = e.length > 0 ? "[" + e.join(", ") + "]" : "")
+					);
+				};
+			for (r = 0; r < d.length; r++)
+				if (LadiPageScript.isNull(t))
+					LadiPageScript.isObject(i) && i.only_text ? n.push(d[r].innerText) : n.push(d[r].innerHTML);
+				else if (((d[r].innerHTML = t), !LadiPageScript.isEmpty(e))) {
+					var g = LadiPageScript.findAncestor(d[r], "ladi-element");
+					LadiPageScript.isEmpty(g) || g.classList.add(e);
+				}
+			for (r = 0; r < c.length; r++)
+				if (LadiPageScript.isNull(t))
+					if (c[r].classList.contains("ladi-form-control-file")) {
+						var f = c[r].getAttribute("data-path-file") || "[]";
+						(f = JSON.parse(f)), n.push(f);
+					} else n.push(c[r].value);
+				else
+					c[r].classList.contains("ladi-form-control-file")
+						? (c[r].setAttribute("data-path-file", JSON.stringify(t)),
+						  (c[r].value = y(t)),
+						  c[r].dispatchEvent(new Event("change")))
+						: ((c[r].value = t),
+						  c[r].dispatchEvent(new Event("change")),
+						  "date" == c[r].getAttribute("data-type") &&
+								(LadiPageScript.isEmpty(t)
+									? c[r].setAttribute("type", "text")
+									: c[r].setAttribute("type", "date")));
+			var h = !1;
+			for (r = 0; r < p.length; r++)
+				LadiPageScript.isNull(t)
+					? (p[r].checked && n.push(p[r].value), "checkbox" == p[r].getAttribute("type").toLowerCase() && (o = !0))
+					: ((h = !1),
+					  "checkbox" == p[r].getAttribute("type").toLowerCase() && -1 != s.indexOf(p[r].value) && (h = !0),
+					  "radio" == p[r].getAttribute("type").toLowerCase() && s.length > 0 && s[0] == p[r].value && (h = !0),
+					  h ? p[r].checked || p[r].click() : p[r].checked && p[r].click());
+			for (r = 0; r < u.length; r++)
+				if (LadiPageScript.isNull(t)) {
+					var v = getComputedStyle(u[r]).backgroundImage;
+					(v = v || "").startsWith('url("') && (v = v.substring('url("'.length)),
+						v.endsWith('")') && (v = v.substring(0, v.length - '")'.length)),
+						n.push(v);
+				} else if (LadiPageScript.isEmpty(t)) u[r].style.setProperty("background-image", "none");
+				else {
+					var E = LadiPageScript.findAncestor(u[r], "ladi-element"),
+						P = LadiPageScript.getOptimizeImage(t, E.clientWidth, E.clientHeight, !0, !1, !1, !0);
+					u[r].style.setProperty("background-image", 'url("' + P + '")');
+				}
+			for (r = 0; r < m.length; r++) {
+				var L = LadiPageScript.runtime.eventData[this.id];
+				if (LadiPageScript.isNull(t))
+					LadiPageScript.isEmpty(L) ||
+						n.push({
+							type: L["option.video_type"],
+							value: L["option.video_value"],
+						});
+				else {
+					L["option.video_value"] = t;
+					var A = m[r].getElementsByClassName("iframe-video-preload")[0],
+						b = null;
+					if (L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.youtube) {
+						var w =
+								"https://img.youtube.com/vi/" +
+								(b = LadiPageScript.getVideoId(L["option.video_type"], t)) +
+								"/hqdefault.jpg",
+							S = m[r].getElementsByClassName("ladi-video-background")[0];
+						LadiPageScript.isEmpty(S) || S.style.setProperty("background-image", 'url("' + w + '")');
+					}
+					if (LadiPageScript.isEmpty(A))
+						LadiPageScript.playVideo(
+							this.id,
+							L["option.video_type"],
+							L["option.video_value"],
+							L["option.video_control"]
+						);
+					else {
+						LadiPageScript.pauseAllVideo();
+						var T = !1;
+						if (L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.youtube) {
+							var O = window.YT.get(A.id);
+							!LadiPageScript.isEmpty(O) &&
+								LadiPageScript.isFunction(O.loadVideoById) &&
+								(O.loadVideoById(b, 0), O.seekTo(0), (T = !0));
+						}
+						L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.direct &&
+							LadiPageScript.isFunction(A.play) &&
+							((A.src = t), (A.currentTime = 0), (T = !0)),
+							T && LadiPageScript.runEventReplayVideo(A.id, L["option.video_type"], !0);
+					}
+				}
+			}
+			for (r = 0; r < _.length; r++)
+				LadiPageScript.isNull(t)
+					? (_[r].classList.contains("selected") && n.push(_[r].getAttribute("data-value")),
+					  "true" == a.getAttribute("data-multiple") && (o = !0))
+					: ((h = !1),
+					  -1 != s.indexOf(_[r].getAttribute("data-value")) && (h = !0),
+					  h
+							? _[r].classList.contains("selected") || _[r].click()
+							: _[r].classList.contains("selected") && _[r].click());
+		}
+		return o ? n : n.length > 0 ? n[0] : null;
+	}
+};
+
+// ladiForm
 class ladiFormControl {
 	constructor(option = {}) {
 		this.defaultMainPrefix = ".f-main--";
 		this.defaultRemotePrefix = ".f-remote--";
+
 		this.controlFormSelector = option.controlSelector
 			? option.controlSelector.form
 				? option.controlSelector.form
 				: this.defaultMainPrefix + "control"
 			: this.defaultMainPrefix + "control";
+
 		this.remoteFormSelector = option.remoteSelector
 			? option.remoteSelector.form
 				? option.remoteSelector.form
 				: this.defaultRemotePrefix + "control"
 			: this.defaultRemotePrefix + "control";
+
 		this.submitFormId = document.querySelector(this.controlFormSelector).getAttribute("id");
-		this.triggerFormSubmitSelector = option.submitSelector
-			? option.submitSelector
-			: this.defaultMainPrefix + "submit";
+
+		this.triggerFormSubmitSelector = option.submitSelector ? option.submitSelector : this.defaultMainPrefix + "submit";
+
 		this.defaultSelector = {
 			fullName: "full_name",
 			phone: "phone",
@@ -46,54 +206,45 @@ class ladiFormControl {
 			utmMedium: "utm_medium",
 			line: "line",
 		};
+
 		this.cacheValue = {};
+
 		this.controlSelector = {};
 		this.remoteSelector = {};
+
 		this.controlFormName = {};
+
 		this.switchSelector = [];
 		this.switchData = [];
+
 		for (const key in this.defaultSelector) {
 			// console.log("run");
 			this.controlSelector[key] = option.controlSelector
 				? controlSelector[key]
 					? this.queryDom("one", `${this.controlFormSelector} ${option.controlSelector[key]}`)
-					: this.queryDom(
-							"one",
-							`${this.controlFormSelector} ${this.defaultMainPrefix + this.defaultSelector[key]}`
-					  )
-				: this.queryDom(
-						"one",
-						`${this.controlFormSelector} ${this.defaultMainPrefix + this.defaultSelector[key]}`
-				  );
+					: this.queryDom("one", `${this.controlFormSelector} ${this.defaultMainPrefix + this.defaultSelector[key]}`)
+				: this.queryDom("one", `${this.controlFormSelector} ${this.defaultMainPrefix + this.defaultSelector[key]}`);
 
 			this.remoteSelector[key] = option.remoteSelector
 				? remoteSelector[key]
 					? this.queryDom("all", `${this.remoteFormSelector} ${option.remoteSelector[key]}`)
-					: this.queryDom(
-							"all",
-							`${this.remoteFormSelector} ${this.defaultRemotePrefix + this.defaultSelector[key]}`
-					  )
-				: this.queryDom(
-						"all",
-						`${this.remoteFormSelector} ${this.defaultRemotePrefix + this.defaultSelector[key]}`
-				  );
+					: this.queryDom("all", `${this.remoteFormSelector} ${this.defaultRemotePrefix + this.defaultSelector[key]}`)
+				: this.queryDom("all", `${this.remoteFormSelector} ${this.defaultRemotePrefix + this.defaultSelector[key]}`);
 		}
+
 		for (const key in this.controlSelector) {
 			// console.log(this.controlSelector[key])
-			try {
-				this.cacheValue[key] = this.controlSelector[key]
-					? this.getInput(this.controlSelector[key]).value
-					: null;
-				this.controlFormName[key] = this.controlSelector[key]
-					? this.getInput(this.controlSelector[key]).getAttribute("name")
-					: null;
-			} catch (e) {
-				console.log(e);
-			}
+			this.cacheValue[key] = this.controlSelector[key] ? this.getInput(this.controlSelector[key]).value : null;
+			this.controlFormName[key] = this.controlSelector[key]
+				? this.getInput(this.controlSelector[key]).getAttribute("name")
+				: null;
 		}
+
 		this.addChangeEvent();
 		this.addSubmitMainFormEvent();
+		this.changeValueFormControl();
 	}
+
 	addChangeEvent() {
 		for (const key in this.remoteSelector) {
 			// console.log("oooo");
@@ -105,7 +256,7 @@ class ladiFormControl {
 						this.changeValue(e.target.value, this.getInput(this.controlSelector[key]));
 						this.changeValueFormControl();
 						for (const switchData of this.switchData) {
-							console.log(switchData.key, this.defaultSelector[key]);
+							// console.log(switchData.key, this.defaultSelector[key]);
 							if (switchData.key === this.defaultSelector[key]) {
 								this.changeDataSwitch(switchData.key);
 							}
@@ -115,6 +266,7 @@ class ladiFormControl {
 			}
 		}
 	}
+
 	addSubmitMainFormEvent() {
 		const selectors = document.querySelectorAll(this.triggerFormSubmitSelector);
 		for (const selector of selectors) {
@@ -123,9 +275,11 @@ class ladiFormControl {
 			});
 		}
 	}
+
 	changeValue(value, target) {
 		target.value = value;
 	}
+
 	changeValueFormControl() {
 		for (const key in this.controlSelector) {
 			if (this.controlSelector[key]) {
@@ -138,10 +292,16 @@ class ladiFormControl {
 			}
 		}
 	}
+
 	getInput(selector) {
 		// console.log(selector);
-		return selector.querySelector("input") ? selector.querySelector("input") : selector.querySelector("select");
+		return selector.querySelector("input")
+			? selector.querySelector("input")
+			: selector.querySelector("select")
+			? selector.querySelector("select")
+			: selector.querySelector("textarea");
 	}
+
 	queryDom(range, selector) {
 		const stringSelector =
 			typeof selector === "string"
@@ -154,9 +314,11 @@ class ladiFormControl {
 			return document.querySelectorAll(stringSelector);
 		}
 	}
+
 	getCacheValue(key) {
 		return this.cacheValue[key];
 	}
+
 	submitForm(selector) {
 		// console.log(selector)
 		try {
@@ -165,6 +327,7 @@ class ladiFormControl {
 			console.log(e);
 		}
 	}
+
 	addSwitchData(key, pushTo, data) {
 		this.switchData.push({ key, pushTo, data });
 		const keyCode = "{$" + pushTo + "$}";
@@ -186,6 +349,7 @@ class ladiFormControl {
 		this.switchSelector.push({ key, pushTo, doms });
 		this.changeDataSwitch(key);
 	}
+
 	getKey(obj, value) {
 		for (const key in obj) {
 			// console.log(key, value)
@@ -195,6 +359,7 @@ class ladiFormControl {
 		}
 		return false;
 	}
+
 	changeDataSwitch(key) {
 		const keyObj = this.getKey(this.controlFormName, key);
 		// console.log(this.defaultSelector)
@@ -212,5 +377,42 @@ class ladiFormControl {
 				}
 			}
 		}
+	}
+}
+
+class ladiTabControl {
+	constructor(boxTabSelector, boxTabRemote, activeSelector) {
+		this.boxTabEle = document.querySelectorAll(boxTabSelector);
+		this.boxTabRemoteEle = document.querySelectorAll(boxTabRemote);
+		this.activeBtnEle = document.querySelector(activeSelector);
+
+		this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
+		this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
+
+		this.addGlobalStyle(
+			`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-button-background`,
+			this.activeBgStyle
+		);
+
+		this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
+		this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
+
+		this.addGlobalStyle(
+			`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-headline`,
+			this.activeTextStyle
+		);
+	}
+	addGlobalStyle(selector, style) {
+		console.log("run");
+		const styleEle = document.createElement("style");
+		styleEle.innerHTML = `${selector} {
+			${style}
+		}`;
+		document.head.appendChild(styleEle);
+	}
+	getStyle(selector, stylesName) {
+		const selectorStyle = window.getComputedStyle(selector);
+		const styles = stylesName.map((styleName) => `${styleName}: ${selectorStyle.getPropertyValue(styleName)} !important`);
+		return styles.join(";");
 	}
 }
