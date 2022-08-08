@@ -423,7 +423,7 @@ class ladiTabControl {
 					`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button-background`,
 					this.activeBgStyle
 				);
-			}, 200);
+			}, 500);
 		};
 		this.setTabGroupData();
 		this.addClickEvent();
@@ -435,7 +435,20 @@ class ladiTabControl {
 			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
 			for (const tab of tabs) {
 				const group = this.getTabGroup(tab);
-				tab.setAttribute("data-group", group);
+				if (group) {
+					tab.setAttribute("data-group", group);
+					this.setTabGroupDataOnButton(group);
+				}
+			}
+		}
+	}
+	setTabGroupDataOnButton(group) {
+		for (const tabBtn of this.boxTabRemoteEle) {
+			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
+			for (const btn of buttons) {
+				if (btn.classList.contains(group)) {
+					btn.setAttribute("data-group", group);
+				}
 			}
 		}
 	}
@@ -453,13 +466,13 @@ class ladiTabControl {
 			}
 		}
 	}
-	getTabGroupActive() {}
+
 	checkChangeTab() {
 		for (const boxTab of this.boxTabEle) {
 			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
 			const [activeTabIndex, activeTabGroup] = this.getTabActive(tabs);
 			this.activeBtn(activeTabIndex, activeTabGroup);
-			console.log(activeTabIndex);
+			// console.log(activeTabIndex, activeTabGroup);
 		}
 	}
 	unSelectedAllBtn(tabBtn) {
@@ -469,18 +482,25 @@ class ladiTabControl {
 		}
 	}
 	activeBtn(index, group) {
+		// console.log(index, group);
 		for (const tabBtn of this.boxTabRemoteEle) {
 			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
 			this.unSelectedAllBtn(tabBtn);
-			
+			// console.log(check)
 			if (group) {
 				for (const btn of buttons) {
 					if (btn.classList.contains(group)) {
-						btn.classList.add("active")
+						btn.classList.add("active");
+					} else if (!btn.getAttribute("data-group")) {
+						if (buttons[index - 1]) {
+							buttons[index - 1].classList.add("active");
+						}
 					}
 				}
-			} else if (buttons[index - 1]) {
-				buttons[index - 1].classList.add("active");
+			} else {
+				if (buttons[index - 1]) {
+					buttons[index - 1].classList.add("active");
+				}
 			}
 		}
 	}
