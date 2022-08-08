@@ -378,6 +378,18 @@ class ladiFormControl {
 			}
 		}
 	}
+
+	checkChangeValue(selector) {
+		const ele = document.querySelectorAll(selector);
+		for (const iEle of ele) {
+			iEle.addEventListener("click", () => {
+				for (const key in this.cacheValue) {
+					if (this.cacheValue[key] !== null) {
+					}
+				}
+			});
+		}
+	}
 }
 
 class ladiTabControl {
@@ -390,22 +402,25 @@ class ladiTabControl {
 		this.setStyleTag();
 		this.styleEle;
 
-		this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
-		this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
+		window.onload = () => {
+			this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
+			this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
 
-		this.addGlobalStyle(
-			`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-button-background`,
-			this.activeBgStyle
-		);
+			this.addGlobalStyle(
+				`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button-background`,
+				this.activeBgStyle
+			);
 
-		this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
-		this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
+			this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
+			this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
 
-		this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.selected .ladi-headline`, this.activeTextStyle);
-
+			this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-headline`, this.activeTextStyle);
+		};
+		
 		this.addClickEvent();
 		this.checkChangeTab();
 	}
+	getTabGroupActive() {}
 	checkChangeTab() {
 		for (const boxTab of this.boxTabEle) {
 			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
@@ -415,9 +430,9 @@ class ladiTabControl {
 		}
 	}
 	unSelectedAllBtn(tabBtn) {
-		const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element.selected[data-action]");
+		const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element.active[data-action]");
 		for (const btn of buttons) {
-			btn.classList.remove("selected");
+			btn.classList.remove("active");
 		}
 	}
 	activeBtnWithIndex(index) {
@@ -425,7 +440,7 @@ class ladiTabControl {
 			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
 			this.unSelectedAllBtn(tabBtn);
 			if (buttons[index - 1]) {
-				buttons[index - 1].classList.add("selected");
+				buttons[index - 1].classList.add("active");
 			}
 		}
 	}
@@ -443,9 +458,7 @@ class ladiTabControl {
 		return null;
 	}
 	addGlobalStyle(selector, style) {
-		this.styleEle.innerHTML += `${selector} {
-			${style}
-		}`;
+		this.styleEle.innerHTML += `${selector} {${style}}`;
 	}
 	setStyleTag() {
 		const styleEle = document.createElement("style");
