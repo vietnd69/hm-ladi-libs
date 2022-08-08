@@ -398,35 +398,68 @@ class ladiTabControl {
 		this.boxTabRemoteEle = document.querySelectorAll(boxTabRemote);
 		this.activeBtnEle = document.querySelector(activeSelector);
 
+		this.tabIndexData = [];
+
 		this.styleId = "hm-style";
 		this.setStyleTag();
 		this.styleEle;
 
 		window.onload = () => {
 			this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
-			this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
-
-			this.addGlobalStyle(
-				`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button-background`,
-				this.activeBgStyle
-			);
 
 			this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
-			this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
 
-			this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-headline`, this.activeTextStyle);
+			setTimeout(() => {
+				this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
+
+				this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
+
+				this.addGlobalStyle(
+					`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-headline`,
+					this.activeTextStyle
+				);
+
+				this.addGlobalStyle(
+					`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button-background`,
+					this.activeBgStyle
+				);
+			}, 200);
 		};
-		
+		this.setTabGroupData();
 		this.addClickEvent();
 		this.checkChangeTab();
+	}
+
+	setTabGroupData() {
+		for (const boxTab of this.boxTabEle) {
+			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
+			for (const tab of tabs) {
+				const group = this.getTabGroup(tab);
+				tab.setAttribute("data-group", group);
+			}
+		}
+	}
+	getTabGroup(tab) {
+		const selectorP = tab.getElementsByTagName("p");
+		const selectorH3 = tab.getElementsByTagName("h3");
+		for (const dom of selectorP) {
+			if (dom.textContent.includes("{@") && dom.textContent.includes("@}")) {
+				return dom.textContent.replace(/@|{|}/g, "");
+			}
+		}
+		for (const dom of selectorH3) {
+			if (dom.textContent.includes("{@") && dom.textContent.includes("@}")) {
+				return dom.textContent.replace(/@|{|}/g, "");
+			}
+		}
 	}
 	getTabGroupActive() {}
 	checkChangeTab() {
 		for (const boxTab of this.boxTabEle) {
 			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
-			const activeTab = this.getTabActive(tabs);
-			this.activeBtnWithIndex(activeTab);
-			console.log(activeTab);
+			const [activeTabIndex, activeTabGroup] = this.getTabActive(tabs);
+			this.activeBtn(activeTabIndex, activeTabGroup);
+			console.log(activeTabIndex);
 		}
 	}
 	unSelectedAllBtn(tabBtn) {
@@ -435,11 +468,18 @@ class ladiTabControl {
 			btn.classList.remove("active");
 		}
 	}
-	activeBtnWithIndex(index) {
+	activeBtn(index, group) {
 		for (const tabBtn of this.boxTabRemoteEle) {
 			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
 			this.unSelectedAllBtn(tabBtn);
-			if (buttons[index - 1]) {
+			
+			if (group) {
+				for (const btn of buttons) {
+					if (btn.classList.contains(group)) {
+						btn.classList.add("active")
+					}
+				}
+			} else if (buttons[index - 1]) {
 				buttons[index - 1].classList.add("active");
 			}
 		}
@@ -450,6 +490,14 @@ class ladiTabControl {
 		}
 	}
 	getTabActive(tabs) {
+		for (const tab of tabs) {
+			if (tab.classList.contains("selected")) {
+				return [tab.getAttribute("data-index"), tab.getAttribute("data-group") ? tab.getAttribute("data-group") : null];
+			}
+		}
+		return null;
+	}
+	getGroupTabActive(tabs) {
 		for (const tab of tabs) {
 			if (tab.classList.contains("selected")) {
 				return tab.getAttribute("data-index");
