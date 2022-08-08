@@ -1,159 +1,3 @@
-// override ladi script
-LadiPageLibraryV2.prototype.value = function (t, e, i) {
-	var a = this.doc || document.getElementById(this.id);
-	if (!LadiPageScript.isEmpty(a)) {
-		var n = [],
-			o = !1,
-			r = 0,
-			s = LadiPageScript.isArray(t) ? t : [t],
-			l = a.querySelectorAll('.ladi-form-item > [data-is-select-country="true"]');
-		if (4 == l.length)
-			if (LadiPageScript.isNull(t)) {
-				for (r = 0; r < l.length; r++) n.push(l[r].value);
-				o = !0;
-			} else
-				s.forEach(function (t, e) {
-					LadiPageScript.isEmpty(l[e]) || ((l[e].value = t), LadiPageScript.fireEvent(l[e], "change"));
-				});
-		else {
-			var d = document.querySelectorAll(
-					"#" +
-						this.id +
-						" > ." +
-						["ladi-button .ladi-headline", "ladi-headline", "ladi-paragraph", "ladi-list-paragraph"].join(
-							", #" + this.id + " > ."
-						)
-				),
-				c = document.querySelectorAll(
-					"#" +
-						this.id +
-						" > ." +
-						[
-							"ladi-form-item-container .ladi-form-item > input",
-							"ladi-form-item-container .ladi-form-item > textarea",
-							"ladi-form-item-container .ladi-form-item > select",
-						].join(", #" + this.id + " > .")
-				),
-				p = document.querySelectorAll(
-					"#" +
-						this.id +
-						" > ." +
-						["ladi-form-item-container .ladi-form-checkbox-item > input"].join(", #" + this.id + " > .")
-				),
-				u = document.querySelectorAll("#" + this.id + " > .ladi-image .ladi-image-background"),
-				m = document.querySelectorAll("#" + this.id + " > .ladi-video"),
-				_ = document.querySelectorAll("#" + this.id + " > .ladi-survey > .ladi-survey-option"),
-				y = function (t) {
-					var e = [];
-					return (
-						LadiPageScript.isArray(t) &&
-							t.forEach(function (t) {
-								e.push(t.name);
-							}),
-						(e = e.length > 0 ? "[" + e.join(", ") + "]" : "")
-					);
-				};
-			for (r = 0; r < d.length; r++)
-				if (LadiPageScript.isNull(t))
-					LadiPageScript.isObject(i) && i.only_text ? n.push(d[r].innerText) : n.push(d[r].innerHTML);
-				else if (((d[r].innerHTML = t), !LadiPageScript.isEmpty(e))) {
-					var g = LadiPageScript.findAncestor(d[r], "ladi-element");
-					LadiPageScript.isEmpty(g) || g.classList.add(e);
-				}
-			for (r = 0; r < c.length; r++)
-				if (LadiPageScript.isNull(t))
-					if (c[r].classList.contains("ladi-form-control-file")) {
-						var f = c[r].getAttribute("data-path-file") || "[]";
-						(f = JSON.parse(f)), n.push(f);
-					} else n.push(c[r].value);
-				else
-					c[r].classList.contains("ladi-form-control-file")
-						? (c[r].setAttribute("data-path-file", JSON.stringify(t)),
-						  (c[r].value = y(t)),
-						  c[r].dispatchEvent(new Event("change")))
-						: ((c[r].value = t),
-						  c[r].dispatchEvent(new Event("change")),
-						  "date" == c[r].getAttribute("data-type") &&
-								(LadiPageScript.isEmpty(t)
-									? c[r].setAttribute("type", "text")
-									: c[r].setAttribute("type", "date")));
-			var h = !1;
-			for (r = 0; r < p.length; r++)
-				LadiPageScript.isNull(t)
-					? (p[r].checked && n.push(p[r].value), "checkbox" == p[r].getAttribute("type").toLowerCase() && (o = !0))
-					: ((h = !1),
-					  "checkbox" == p[r].getAttribute("type").toLowerCase() && -1 != s.indexOf(p[r].value) && (h = !0),
-					  "radio" == p[r].getAttribute("type").toLowerCase() && s.length > 0 && s[0] == p[r].value && (h = !0),
-					  h ? p[r].checked || p[r].click() : p[r].checked && p[r].click());
-			for (r = 0; r < u.length; r++)
-				if (LadiPageScript.isNull(t)) {
-					var v = getComputedStyle(u[r]).backgroundImage;
-					(v = v || "").startsWith('url("') && (v = v.substring('url("'.length)),
-						v.endsWith('")') && (v = v.substring(0, v.length - '")'.length)),
-						n.push(v);
-				} else if (LadiPageScript.isEmpty(t)) u[r].style.setProperty("background-image", "none");
-				else {
-					var E = LadiPageScript.findAncestor(u[r], "ladi-element"),
-						P = LadiPageScript.getOptimizeImage(t, E.clientWidth, E.clientHeight, !0, !1, !1, !0);
-					u[r].style.setProperty("background-image", 'url("' + P + '")');
-				}
-			for (r = 0; r < m.length; r++) {
-				var L = LadiPageScript.runtime.eventData[this.id];
-				if (LadiPageScript.isNull(t))
-					LadiPageScript.isEmpty(L) ||
-						n.push({
-							type: L["option.video_type"],
-							value: L["option.video_value"],
-						});
-				else {
-					L["option.video_value"] = t;
-					var A = m[r].getElementsByClassName("iframe-video-preload")[0],
-						b = null;
-					if (L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.youtube) {
-						var w =
-								"https://img.youtube.com/vi/" +
-								(b = LadiPageScript.getVideoId(L["option.video_type"], t)) +
-								"/hqdefault.jpg",
-							S = m[r].getElementsByClassName("ladi-video-background")[0];
-						LadiPageScript.isEmpty(S) || S.style.setProperty("background-image", 'url("' + w + '")');
-					}
-					if (LadiPageScript.isEmpty(A))
-						LadiPageScript.playVideo(
-							this.id,
-							L["option.video_type"],
-							L["option.video_value"],
-							L["option.video_control"]
-						);
-					else {
-						LadiPageScript.pauseAllVideo();
-						var T = !1;
-						if (L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.youtube) {
-							var O = window.YT.get(A.id);
-							!LadiPageScript.isEmpty(O) &&
-								LadiPageScript.isFunction(O.loadVideoById) &&
-								(O.loadVideoById(b, 0), O.seekTo(0), (T = !0));
-						}
-						L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.direct &&
-							LadiPageScript.isFunction(A.play) &&
-							((A.src = t), (A.currentTime = 0), (T = !0)),
-							T && LadiPageScript.runEventReplayVideo(A.id, L["option.video_type"], !0);
-					}
-				}
-			}
-			for (r = 0; r < _.length; r++)
-				LadiPageScript.isNull(t)
-					? (_[r].classList.contains("selected") && n.push(_[r].getAttribute("data-value")),
-					  "true" == a.getAttribute("data-multiple") && (o = !0))
-					: ((h = !1),
-					  -1 != s.indexOf(_[r].getAttribute("data-value")) && (h = !0),
-					  h
-							? _[r].classList.contains("selected") || _[r].click()
-							: _[r].classList.contains("selected") && _[r].click());
-		}
-		return o ? n : n.length > 0 ? n[0] : null;
-	}
-};
-
 // ladiForm
 class ladiFormControl {
 	constructor(option = {}) {
@@ -390,7 +234,13 @@ class ladiFormControl {
 			});
 		}
 	}
+
+	getRequired() {}
+	checkValidate() {}
 }
+
+
+
 
 class ladiTabControl {
 	constructor(boxTabSelector, boxTabRemote, activeSelector) {
@@ -508,6 +358,9 @@ class ladiTabControl {
 		for (const boxTab of this.boxTabRemoteEle) {
 			boxTab.addEventListener("click", () => this.checkChangeTab());
 		}
+		for (const boxTab of this.boxTabEle) {
+			boxTab.addEventListener("click", () => this.checkChangeTab());
+		}
 	}
 	getTabActive(tabs) {
 		for (const tab of tabs) {
@@ -541,3 +394,253 @@ class ladiTabControl {
 		return styles.join(";");
 	}
 }
+
+
+
+
+
+// override ladi script
+LadiPageLibraryV2.prototype.value = function (t, e, i) {
+	var a = this.doc || document.getElementById(this.id);
+	if (!LadiPageScript.isEmpty(a)) {
+		var n = [],
+			o = !1,
+			r = 0,
+			s = LadiPageScript.isArray(t) ? t : [t],
+			l = a.querySelectorAll('.ladi-form-item > [data-is-select-country="true"]');
+		if (4 == l.length)
+			if (LadiPageScript.isNull(t)) {
+				for (r = 0; r < l.length; r++) n.push(l[r].value);
+				o = !0;
+			} else
+				s.forEach(function (t, e) {
+					LadiPageScript.isEmpty(l[e]) || ((l[e].value = t), LadiPageScript.fireEvent(l[e], "change"));
+				});
+		else {
+			var d = document.querySelectorAll(
+					"#" +
+						this.id +
+						" > ." +
+						["ladi-button .ladi-headline", "ladi-headline", "ladi-paragraph", "ladi-list-paragraph"].join(
+							", #" + this.id + " > ."
+						)
+				),
+				c = document.querySelectorAll(
+					"#" +
+						this.id +
+						" > ." +
+						[
+							"ladi-form-item-container .ladi-form-item > input",
+							"ladi-form-item-container .ladi-form-item > textarea",
+							"ladi-form-item-container .ladi-form-item > select",
+						].join(", #" + this.id + " > .")
+				),
+				p = document.querySelectorAll(
+					"#" +
+						this.id +
+						" > ." +
+						["ladi-form-item-container .ladi-form-checkbox-item > input"].join(", #" + this.id + " > .")
+				),
+				u = document.querySelectorAll("#" + this.id + " > .ladi-image .ladi-image-background"),
+				m = document.querySelectorAll("#" + this.id + " > .ladi-video"),
+				_ = document.querySelectorAll("#" + this.id + " > .ladi-survey > .ladi-survey-option"),
+				y = function (t) {
+					var e = [];
+					return (
+						LadiPageScript.isArray(t) &&
+							t.forEach(function (t) {
+								e.push(t.name);
+							}),
+						(e = e.length > 0 ? "[" + e.join(", ") + "]" : "")
+					);
+				};
+			for (r = 0; r < d.length; r++)
+				if (LadiPageScript.isNull(t))
+					LadiPageScript.isObject(i) && i.only_text ? n.push(d[r].innerText) : n.push(d[r].innerHTML);
+				else if (((d[r].innerHTML = t), !LadiPageScript.isEmpty(e))) {
+					var g = LadiPageScript.findAncestor(d[r], "ladi-element");
+					LadiPageScript.isEmpty(g) || g.classList.add(e);
+				}
+			for (r = 0; r < c.length; r++)
+				if (LadiPageScript.isNull(t))
+					if (c[r].classList.contains("ladi-form-control-file")) {
+						var f = c[r].getAttribute("data-path-file") || "[]";
+						(f = JSON.parse(f)), n.push(f);
+					} else n.push(c[r].value);
+				else
+					c[r].classList.contains("ladi-form-control-file")
+						? (c[r].setAttribute("data-path-file", JSON.stringify(t)),
+						  (c[r].value = y(t)),
+						  c[r].dispatchEvent(new Event("change")))
+						: ((c[r].value = t),
+						  c[r].dispatchEvent(new Event("change")),
+						  "date" == c[r].getAttribute("data-type") &&
+								(LadiPageScript.isEmpty(t)
+									? c[r].setAttribute("type", "text")
+									: c[r].setAttribute("type", "date")));
+			var h = !1;
+			for (r = 0; r < p.length; r++)
+				LadiPageScript.isNull(t)
+					? (p[r].checked && n.push(p[r].value), "checkbox" == p[r].getAttribute("type").toLowerCase() && (o = !0))
+					: ((h = !1),
+					  "checkbox" == p[r].getAttribute("type").toLowerCase() && -1 != s.indexOf(p[r].value) && (h = !0),
+					  "radio" == p[r].getAttribute("type").toLowerCase() && s.length > 0 && s[0] == p[r].value && (h = !0),
+					  h ? p[r].checked || p[r].click() : p[r].checked && p[r].click());
+			for (r = 0; r < u.length; r++)
+				if (LadiPageScript.isNull(t)) {
+					var v = getComputedStyle(u[r]).backgroundImage;
+					(v = v || "").startsWith('url("') && (v = v.substring('url("'.length)),
+						v.endsWith('")') && (v = v.substring(0, v.length - '")'.length)),
+						n.push(v);
+				} else if (LadiPageScript.isEmpty(t)) u[r].style.setProperty("background-image", "none");
+				else {
+					var E = LadiPageScript.findAncestor(u[r], "ladi-element"),
+						P = LadiPageScript.getOptimizeImage(t, E.clientWidth, E.clientHeight, !0, !1, !1, !0);
+					u[r].style.setProperty("background-image", 'url("' + P + '")');
+				}
+			for (r = 0; r < m.length; r++) {
+				var L = LadiPageScript.runtime.eventData[this.id];
+				if (LadiPageScript.isNull(t))
+					LadiPageScript.isEmpty(L) ||
+						n.push({
+							type: L["option.video_type"],
+							value: L["option.video_value"],
+						});
+				else {
+					L["option.video_value"] = t;
+					var A = m[r].getElementsByClassName("iframe-video-preload")[0],
+						b = null;
+					if (L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.youtube) {
+						var w =
+								"https://img.youtube.com/vi/" +
+								(b = LadiPageScript.getVideoId(L["option.video_type"], t)) +
+								"/hqdefault.jpg",
+							S = m[r].getElementsByClassName("ladi-video-background")[0];
+						LadiPageScript.isEmpty(S) || S.style.setProperty("background-image", 'url("' + w + '")');
+					}
+					if (LadiPageScript.isEmpty(A))
+						LadiPageScript.playVideo(
+							this.id,
+							L["option.video_type"],
+							L["option.video_value"],
+							L["option.video_control"]
+						);
+					else {
+						LadiPageScript.pauseAllVideo();
+						var T = !1;
+						if (L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.youtube) {
+							var O = window.YT.get(A.id);
+							!LadiPageScript.isEmpty(O) &&
+								LadiPageScript.isFunction(O.loadVideoById) &&
+								(O.loadVideoById(b, 0), O.seekTo(0), (T = !0));
+						}
+						L["option.video_type"] == LadiPageScript.const.VIDEO_TYPE.direct &&
+							LadiPageScript.isFunction(A.play) &&
+							((A.src = t), (A.currentTime = 0), (T = !0)),
+							T && LadiPageScript.runEventReplayVideo(A.id, L["option.video_type"], !0);
+					}
+				}
+			}
+			for (r = 0; r < _.length; r++)
+				LadiPageScript.isNull(t)
+					? (_[r].classList.contains("selected") && n.push(_[r].getAttribute("data-value")),
+					  "true" == a.getAttribute("data-multiple") && (o = !0))
+					: ((h = !1),
+					  -1 != s.indexOf(_[r].getAttribute("data-value")) && (h = !0),
+					  h
+							? _[r].classList.contains("selected") || _[r].click()
+							: _[r].classList.contains("selected") && _[r].click());
+		}
+		return o ? n : n.length > 0 ? n[0] : null;
+	}
+};
+
+LadiPageLibraryV2.prototype.index = function (t) {
+	var e = this.doc || document.getElementById(this.id);
+	if (LadiPageScript.isEmpty(e)) this.indexSectionTabs(t);
+	else {
+		var i = LadiPageScript.runtime.eventData[this.id];
+		if (!LadiPageScript.isEmpty(i)) {
+			var a = 0;
+			("gallery" != i.type && "carousel" != i.type) ||
+				((a = parseFloatLadiPage(e.getAttribute("data-current")) || 0), (a += 1)),
+				"collection" == i.type && (a = parseFloatLadiPage(e.getAttribute("data-page")) || 1);
+			var n = null;
+			if (
+				("tabs" == i.type &&
+					((n = e.querySelector(".ladi-tabs > .ladi-element.selected[data-index]")),
+					LadiPageScript.isEmpty(n) && (n = e.querySelector(".ladi-tabs > .ladi-element")),
+					LadiPageScript.isEmpty(n) || (a = parseFloatLadiPage(n.getAttribute("data-index")) || 1)),
+				LadiPageScript.isEmpty(t))
+			)
+				return a;
+			if ("tabs" != i.type) {
+				if ((("gallery" != i.type && "carousel" != i.type) || ((t -= 1), (a -= 1)), t == a))
+					return (
+						"carousel" == i.type && e.setAttribute("data-stop", !0),
+						void ("gallery" == i.type && e.hasAttribute("data-loaded") && e.setAttribute("data-stop", !0))
+					);
+				t > a
+					? (("gallery" != i.type && "carousel" != i.type) || e.setAttribute("data-current", t - 1),
+					  "collection" == i.type && e.setAttribute("data-page", t - 1),
+					  this.next())
+					: (("gallery" != i.type && "carousel" != i.type) || e.setAttribute("data-current", t + 1),
+					  "collection" == i.type && e.setAttribute("data-page", t + 1),
+					  this.prev());
+			} else {
+				var o = e.querySelector('.ladi-tabs > .ladi-element[data-index="' + t + '"]');
+				LadiPageScript.isEmpty(o) ||
+					(LadiPageScript.isEmpty(n) || n.classList.remove("selected"),
+					o.classList.add("selected"),
+					(LadiPageLibraryV2.prototype.index = function (t) {
+						var e = this.doc || document.getElementById(this.id);
+						if (LadiPageScript.isEmpty(e)) this.indexSectionTabs(t);
+						else {
+							var i = LadiPageScript.runtime.eventData[this.id];
+							if (!LadiPageScript.isEmpty(i)) {
+								var a = 0;
+								("gallery" != i.type && "carousel" != i.type) ||
+									((a = parseFloatLadiPage(e.getAttribute("data-current")) || 0), (a += 1)),
+									"collection" == i.type && (a = parseFloatLadiPage(e.getAttribute("data-page")) || 1);
+								var n = null;
+								if (
+									("tabs" == i.type &&
+										((n = e.querySelector(".ladi-tabs > .ladi-element.selected[data-index]")),
+										LadiPageScript.isEmpty(n) && (n = e.querySelector(".ladi-tabs > .ladi-element")),
+										LadiPageScript.isEmpty(n) || (a = parseFloatLadiPage(n.getAttribute("data-index")) || 1)),
+									LadiPageScript.isEmpty(t))
+								)
+									return a;
+								if ("tabs" != i.type) {
+									if ((("gallery" != i.type && "carousel" != i.type) || ((t -= 1), (a -= 1)), t == a))
+										return (
+											"carousel" == i.type && e.setAttribute("data-stop", !0),
+											void (
+												"gallery" == i.type &&
+												e.hasAttribute("data-loaded") &&
+												e.setAttribute("data-stop", !0)
+											)
+										);
+									t > a
+										? (("gallery" != i.type && "carousel" != i.type) || e.setAttribute("data-current", t - 1),
+										  "collection" == i.type && e.setAttribute("data-page", t - 1),
+										  this.next())
+										: (("gallery" != i.type && "carousel" != i.type) || e.setAttribute("data-current", t + 1),
+										  "collection" == i.type && e.setAttribute("data-page", t + 1),
+										  this.prev());
+								} else {
+									var o = e.querySelector('.ladi-tabs > .ladi-element[data-index="' + t + '"]');
+									LadiPageScript.isEmpty(o) ||
+										(LadiPageScript.isEmpty(n) || n.classList.remove("selected"),
+										o.classList.add("selected"),
+										o.closest(".ladi-container > .ladi-element").dispatchEvent(new Event("click")),
+										LadiPageScript.reloadLazyload(!1));
+								}
+							}
+						}
+					}),
+					LadiPageScript.reloadLazyload(!1));
+			}
+		}
+	}
+};
