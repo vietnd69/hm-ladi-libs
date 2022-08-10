@@ -61,6 +61,8 @@ class ladiFormControl {
 		this.switchSelector = [];
 		this.switchData = [];
 
+		this.cacheTextSubmit = document.querySelector(`#${this.submitFormId} .ladi-button .ladi-headline`).innerText;
+
 		for (const key in this.defaultSelector) {
 			// console.log("run");
 			this.controlSelector[key] = option.controlSelector
@@ -113,9 +115,22 @@ class ladiFormControl {
 
 	addSubmitMainFormEvent() {
 		const selectors = document.querySelectorAll(this.triggerFormSubmitSelector);
+
+		const submitBtn = document.querySelector(`#${this.submitFormId} .ladi-button`).parentNode;
 		for (const selector of selectors) {
 			selector.addEventListener("click", () => {
-				this.submitForm(this.submitFormId);
+				submitBtn.dispatchEvent(new Event("click"));
+				const copy = submitBtn.querySelector(".ladi-headline").innerText;
+				selector.querySelector(".ladi-headline").innerText = copy;
+				this.cacheTextSubmit = copy;
+				const checkSubmitInterval = setInterval(() => {
+					if (!(this.cacheTextSubmit === submitBtn.querySelector(".ladi-headline").innerText)) {
+						const copy = submitBtn.querySelector(".ladi-headline").innerText;
+						selector.querySelector(".ladi-headline").innerText = copy;
+						this.cacheTextSubmit = copy;
+						clearInterval(checkSubmitInterval);
+					}
+				}, 500);
 			});
 		}
 	}
@@ -238,9 +253,6 @@ class ladiFormControl {
 	getRequired() {}
 	checkValidate() {}
 }
-
-
-
 
 class ladiTabControl {
 	constructor(boxTabSelector, boxTabRemote, activeSelector) {
@@ -394,10 +406,6 @@ class ladiTabControl {
 		return styles.join(";");
 	}
 }
-
-
-
-
 
 // override ladi script
 LadiPageLibraryV2.prototype.value = function (t, e, i) {
