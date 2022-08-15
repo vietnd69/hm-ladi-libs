@@ -105,11 +105,11 @@ class ladiFormControl {
 							// console.log(switchData.key, this.defaultSelector[key]);
 							if (switchData.key === this.defaultSelector[key]) {
 								this.changeDataSwitch(switchData.key);
-							}
 						}
-					});
-				}
+					}
+				});
 			}
+		}
 		}
 	}
 
@@ -137,7 +137,7 @@ class ladiFormControl {
 
 	changeValue(value, target) {
 		target.value = value;
-	}
+					}
 
 	changeValueFormControl() {
 		for (const key in this.controlSelector) {
@@ -267,14 +267,23 @@ class ladiTabControl {
 		this.styleEle;
 
 		window.onload = () => {
+			this.activeABtnEle = this.activeBtnEle.querySelector(".ladi-button");
+
 			this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
 
 			this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
 
 			setTimeout(() => {
+				this.activeBtnStyle = this.getStyle(this.activeABtnEle, ["border", "border-radius"]);
+
 				this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
 
 				this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
+
+				this.addGlobalStyle(
+					`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button`,
+					this.activeBtnStyle
+				);
 
 				this.addGlobalStyle(
 					`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-headline`,
