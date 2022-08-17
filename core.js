@@ -89,7 +89,6 @@ class ladiFormControl {
 
 		this.cacheTextSubmit = document.querySelector(`#${this.submitFormId} .ladi-button .ladi-headline`).innerText;
 
-
 		this.addChangeEvent();
 		this.addSubmitMainFormEvent();
 	}
@@ -207,7 +206,6 @@ class ladiFormControl {
 		return this.cacheValue[key];
 	}
 
-
 	addSwitchData(name, pushTo, data) {
 		this.switchData.push({ name, pushTo, data });
 		const keyCode = "{$" + pushTo + "$}";
@@ -227,7 +225,7 @@ class ladiFormControl {
 			}
 		}
 		this.switchSelector.push({ name, pushTo, doms });
-		console.log(this.switchData)
+		// console.log(this.switchData)
 
 		this.changeDataSwitch(name);
 	}
@@ -244,9 +242,9 @@ class ladiFormControl {
 
 	changeDataSwitch(name) {
 		// console.log(this.defaultSelector)
-		const input = this.inputControlEle.find(item => item.name === name)
+		const input = this.inputControlEle.find((item) => item.name === name);
 		const value = input.ele[0].value;
-		
+
 		const get = this.switchData.filter((data) => data.name === name);
 		const pushTo = get.map((i) => i.pushTo);
 		for (const iPushTo of pushTo) {
@@ -280,63 +278,81 @@ class ladiFormControl {
 
 class ladiTabControl {
 	constructor(boxTabSelector, boxTabRemote, activeSelector) {
+		this.boxTabRemote = boxTabRemote;
+		this.boxTabSelector = boxTabSelector;
+		this.activeSelector = activeSelector;
 		this.boxTabEle = document.querySelectorAll(boxTabSelector);
-		this.boxTabRemoteEle = document.querySelectorAll(boxTabRemote);
-		this.activeBtnEle = document.querySelector(activeSelector);
+		this.boxTabRemoteEle = this.boxTabRemote ? document.querySelectorAll(boxTabRemote) : undefined;
+		this.activeBtnEle = this.activeSelector ? document.querySelector(activeSelector) : undefined;
 
 		this.tabIndexData = [];
 
-		this.styleId = "hm-style--" + activeSelector.replace(/[^a-zA-Z0-9 ]/g, "");
-		this.setStyleTag();
-		this.styleEle;
+		if (activeSelector) {
+			this.styleId = "hm-style--" + activeSelector.replace(/[^a-zA-Z0-9 ]/g, "");
+			this.setStyleTag();
+			this.styleEle;
+			this.activeABtnEle = this.activeBtnEle.querySelector(".ladi-button");
 
-		// window.onload = () => {
-		this.activeABtnEle = this.activeBtnEle.querySelector(".ladi-button");
+			this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
 
-		this.activeBtnBgEle = this.activeBtnEle.querySelector(".ladi-button-background");
+			this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
+			setTimeout(() => {
+				this.setActive();
+			}, 500);
+		}
 
-		this.activeBtnTextEle = this.activeBtnEle.querySelector(".ladi-element .ladi-headline");
-
-		setTimeout(() => {
-			this.activeBtnStyle = this.getStyle(this.activeABtnEle, ["border", "border-radius"]);
-
-			this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
-
-			this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
-
-			this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button`, this.activeBtnStyle);
-
-			this.addGlobalStyle(`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-headline`, this.activeTextStyle);
-
-			this.addGlobalStyle(
-				`${boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button-background`,
-				this.activeBgStyle
-			);
-		}, 500);
-		// };
 		this.setTabGroupData();
 		this.addClickEvent();
 		this.checkChangeTab();
 	}
 
+	setActive() {
+		this.activeBtnStyle = this.getStyle(this.activeABtnEle, ["border", "border-radius"]);
+
+		this.activeBgStyle = this.getStyle(this.activeBtnBgEle, ["background", "border", "border-radius"]);
+
+		this.activeTextStyle = this.getStyle(this.activeBtnTextEle, ["color", "font-weight", "font-size"]);
+
+		this.addGlobalStyle(`${this.boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button`, this.activeBtnStyle);
+
+		this.addGlobalStyle(
+			`${this.boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-headline`,
+			this.activeTextStyle
+		);
+
+		this.addGlobalStyle(
+			`${this.boxTabRemote} .ladi-button-group > .ladi-element.active .ladi-button-background`,
+			this.activeBgStyle
+		);
+	}
+
 	setTabGroupData() {
+		this.tabGroupData = [];
 		for (const boxTab of this.boxTabEle) {
 			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
+			const tabData = [];
 			for (const tab of tabs) {
 				const group = this.getTabGroup(tab);
 				if (group) {
 					tab.setAttribute("data-group", group);
 					this.setTabGroupDataOnButton(group);
+					tabData.push(group);
 				}
 			}
+			this.tabGroupData.push({
+				boxTabId: boxTab.getAttribute("id"),
+				dataGroup: tabData,
+			});
 		}
 	}
 	setTabGroupDataOnButton(group) {
-		for (const tabBtn of this.boxTabRemoteEle) {
-			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
-			for (const btn of buttons) {
-				if (btn.classList.contains(group)) {
-					btn.setAttribute("data-group", group);
+		if (this.boxTabRemoteEle) {
+			for (const tabBtn of this.boxTabRemoteEle) {
+				const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
+				for (const btn of buttons) {
+					if (btn.classList.contains(group)) {
+						btn.setAttribute("data-group", group);
+					}
 				}
 			}
 		}
@@ -358,10 +374,14 @@ class ladiTabControl {
 
 	checkChangeTab() {
 		for (const boxTab of this.boxTabEle) {
-			const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
-			const [activeTabIndex, activeTabGroup] = this.getTabActive(tabs);
-			this.activeBtn(activeTabIndex, activeTabGroup);
-			// console.log(activeTabIndex, activeTabGroup);
+			setTimeout(() => {
+				const tabs = boxTab.querySelectorAll(".ladi-tabs > div[data-index]");
+				// console.log(tabs)
+				const [activeTabIndex, activeTabGroup] = this.getTabActive(tabs);
+				this.activeBtn(activeTabIndex, activeTabGroup);
+				// console.log(activeTabIndex, activeTabGroup);
+				// console.log("run")
+			}, 10);
 		}
 	}
 	unSelectedAllBtn(tabBtn) {
@@ -372,31 +392,36 @@ class ladiTabControl {
 	}
 	activeBtn(index, group) {
 		// console.log(index, group);
-		for (const tabBtn of this.boxTabRemoteEle) {
-			const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
-			this.unSelectedAllBtn(tabBtn);
-			// console.log(check)
-			if (group) {
-				for (const btn of buttons) {
-					if (btn.classList.contains(group)) {
-						btn.classList.add("active");
-					} else if (!btn.getAttribute("data-group")) {
-						if (buttons[index - 1]) {
-							buttons[index - 1].classList.add("active");
+		if (this.boxTabRemoteEle) {
+			for (const tabBtn of this.boxTabRemoteEle) {
+				const buttons = tabBtn.querySelectorAll(".ladi-button-group > .ladi-element[data-action]");
+				this.unSelectedAllBtn(tabBtn);
+				// console.log(check)
+				if (group) {
+					for (const btn of buttons) {
+						if (btn.classList.contains(group)) {
+							btn.classList.add("active");
+						} else if (!btn.getAttribute("data-group")) {
+							if (buttons[index - 1]) {
+								buttons[index - 1].classList.add("active");
+							}
 						}
 					}
-				}
-			} else {
-				if (buttons[index - 1]) {
-					buttons[index - 1].classList.add("active");
+				} else {
+					if (buttons[index - 1]) {
+						buttons[index - 1].classList.add("active");
+					}
 				}
 			}
 		}
 	}
 	addClickEvent() {
-		for (const boxTab of this.boxTabRemoteEle) {
-			boxTab.addEventListener("click", () => this.checkChangeTab());
+		if (this.boxTabRemoteEle) {
+			for (const boxTab of this.boxTabRemoteEle) {
+				boxTab.addEventListener("click", () => this.checkChangeTab());
+			}
 		}
+
 		for (const boxTab of this.boxTabEle) {
 			boxTab.addEventListener("click", () => this.checkChangeTab());
 		}
@@ -431,6 +456,48 @@ class ladiTabControl {
 		const styles = stylesName.map((styleName) => `${styleName}: ${selectorStyle.getPropertyValue(styleName)} !important`);
 		// console.log(styles);
 		return styles.join(";");
+	}
+
+	changeTabWidthIndex(index, tabId) {
+		try {
+			const element = window.ladi(tabId);
+			element.index(index);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	tabControlWithForm(formSelector) {
+		const selector = document.querySelectorAll(formSelector);
+
+		const changeAllValue = (value) => {
+			for (const ele of selector) {
+				const input = ele.querySelector("select");
+				input.value = value;
+			}
+		};
+		const changeTabWithValue = (value) => {
+			changeAllValue(value);
+			for (const boxTab of this.tabGroupData) {
+				const index = boxTab.dataGroup.findIndex((element) => element === value);
+				if (index != -1) {
+					this.changeTabWidthIndex(index + 1, boxTab.boxTabId);
+				} else {
+					this.changeTabWidthIndex(1, boxTab.boxTabId);
+				}
+			}
+			// console.log(this.tabGroupData);
+
+			console.log(value);
+		};
+
+		for (const ele of selector) {
+			const input = ele.querySelector("select");
+			// console.log(input)
+			input.addEventListener("change", (e) => {
+				changeTabWithValue(e.target.value);
+			});
+		}
 	}
 }
 
@@ -592,6 +659,7 @@ LadiPageLibraryV2.prototype.value = function (t, e, i) {
 
 LadiPageLibraryV2.prototype.index = function (t) {
 	var e = this.doc || document.getElementById(this.id);
+	e.dispatchEvent(new Event("click"));
 	if (LadiPageScript.isEmpty(e)) this.indexSectionTabs(t);
 	else {
 		var i = LadiPageScript.runtime.eventData[this.id];
@@ -627,53 +695,7 @@ LadiPageLibraryV2.prototype.index = function (t) {
 				LadiPageScript.isEmpty(o) ||
 					(LadiPageScript.isEmpty(n) || n.classList.remove("selected"),
 					o.classList.add("selected"),
-					(LadiPageLibraryV2.prototype.index = function (t) {
-						var e = this.doc || document.getElementById(this.id);
-						if (LadiPageScript.isEmpty(e)) this.indexSectionTabs(t);
-						else {
-							var i = LadiPageScript.runtime.eventData[this.id];
-							if (!LadiPageScript.isEmpty(i)) {
-								var a = 0;
-								("gallery" != i.type && "carousel" != i.type) ||
-									((a = parseFloatLadiPage(e.getAttribute("data-current")) || 0), (a += 1)),
-									"collection" == i.type && (a = parseFloatLadiPage(e.getAttribute("data-page")) || 1);
-								var n = null;
-								if (
-									("tabs" == i.type &&
-										((n = e.querySelector(".ladi-tabs > .ladi-element.selected[data-index]")),
-										LadiPageScript.isEmpty(n) && (n = e.querySelector(".ladi-tabs > .ladi-element")),
-										LadiPageScript.isEmpty(n) || (a = parseFloatLadiPage(n.getAttribute("data-index")) || 1)),
-									LadiPageScript.isEmpty(t))
-								)
-									return a;
-								if ("tabs" != i.type) {
-									if ((("gallery" != i.type && "carousel" != i.type) || ((t -= 1), (a -= 1)), t == a))
-										return (
-											"carousel" == i.type && e.setAttribute("data-stop", !0),
-											void (
-												"gallery" == i.type &&
-												e.hasAttribute("data-loaded") &&
-												e.setAttribute("data-stop", !0)
-											)
-										);
-									t > a
-										? (("gallery" != i.type && "carousel" != i.type) || e.setAttribute("data-current", t - 1),
-										  "collection" == i.type && e.setAttribute("data-page", t - 1),
-										  this.next())
-										: (("gallery" != i.type && "carousel" != i.type) || e.setAttribute("data-current", t + 1),
-										  "collection" == i.type && e.setAttribute("data-page", t + 1),
-										  this.prev());
-								} else {
-									var o = e.querySelector('.ladi-tabs > .ladi-element[data-index="' + t + '"]');
-									LadiPageScript.isEmpty(o) ||
-										(LadiPageScript.isEmpty(n) || n.classList.remove("selected"),
-										o.classList.add("selected"),
-										o.closest(".ladi-container > .ladi-element").dispatchEvent(new Event("click")),
-										LadiPageScript.reloadLazyload(!1));
-								}
-							}
-						}
-					}),
+					e.dispatchEvent(new Event("click")),
 					LadiPageScript.reloadLazyload(!1));
 			}
 		}
