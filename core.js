@@ -460,8 +460,7 @@ class ladiTabControl {
 
 	changeTabWidthIndex(index, tabId) {
 		try {
-			const element = window.ladi(tabId);
-			element.index(index);
+			ladi(tabId).index(index);
 		} catch (e) {
 			console.log(e);
 		}
@@ -473,9 +472,21 @@ class ladiTabControl {
 		const changeAllValue = (value) => {
 			for (const ele of selector) {
 				const input = ele.querySelector("select");
-				input.value = value;
+				const options = input.querySelectorAll("option");
+				for (const option of options) {
+					if (option.value === value) {
+						input.value = value;
+						break;
+					}
+					input.value = "";
+				}
 			}
 		};
+
+		// for (const boxTab of this.boxTabEle) {
+		// 	boxTab.addEventListener("click", () => changeAllValue(""));
+		// }
+		
 		const changeTabWithValue = (value) => {
 			changeAllValue(value);
 			for (const boxTab of this.tabGroupData) {
