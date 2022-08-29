@@ -244,7 +244,7 @@ class ladiFormControl {
 			for (const iValue of data.data) {
 				if (iValue.value === value) {
 					for (const selector of selectors.doms) {
-						console.log(selector.nodeName)
+						// console.log(selector.nodeName)
 						if (selector.nodeName === "INPUT") {
 							selector.value = iValue.text;
 						} else {
