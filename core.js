@@ -30,7 +30,7 @@ class ladiFormControl {
 			const cleanClassName = className.replace("ladi-element ", "");
 			this.inputMainEle.push({ tag, name, isRequired, ele, className: "." + cleanClassName, value: "" });
 		}
-		console.log(this.inputMainEle);
+		// console.log(this.inputMainEle);
 		this.inputRemoteEle = [];
 		if (this.controlWithClass) {
 			for (const item of this.inputMainEle) {
@@ -43,7 +43,7 @@ class ladiFormControl {
 					}
 				}
 
-				console.log(eleDom);
+				// console.log(eleDom);
 				if (elements.length > 0) {
 					this.inputRemoteEle.push({ tag: item.tag, name: item.name, ele: eleDom });
 				}
@@ -196,6 +196,7 @@ class ladiFormControl {
 		const keyCode = "{$" + pushTo + "$}";
 		const selectorP = document.getElementsByTagName("p");
 		const selectorH3 = document.getElementsByTagName("h3");
+		const selectorInput = document.querySelectorAll(`form input[value="${keyCode}"]`);
 		let doms = [];
 		for (const dom of selectorP) {
 			if (dom.textContent === keyCode) {
@@ -209,8 +210,13 @@ class ladiFormControl {
 				dom.textContent = "";
 			}
 		}
+		for (const input of selectorInput) {
+			doms.push(input);
+			input.value = "";
+			input.setAttribute("value", "")
+		}
 		this.switchSelector.push({ name, pushTo, doms });
-		// console.log(this.switchData)
+		// console.log(selectorInput)
 
 		this.changeDataSwitch(name);
 	}
@@ -238,7 +244,12 @@ class ladiFormControl {
 			for (const iValue of data.data) {
 				if (iValue.value === value) {
 					for (const selector of selectors.doms) {
-						selector.innerText = iValue.text;
+						console.log(selector.nodeName)
+						if (selector.nodeName === "INPUT") {
+							selector.value = iValue.text;
+						} else {
+							selector.innerText = iValue.text;
+						}
 					}
 				}
 			}
