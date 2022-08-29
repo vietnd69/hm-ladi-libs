@@ -4,85 +4,67 @@ class ladiFormControl {
 		this.defaultMainPrefix = ".f-main--";
 		this.defaultRemotePrefix = ".f-remote--";
 
-		this.controlFormSelector = option.controlSelector
-			? option.controlSelector.form
-				? option.controlSelector.form
-				: this.defaultMainPrefix + "control"
-			: this.defaultMainPrefix + "control";
+		this.controlWithClass = option.controlWithClass ? option.controlWithClass : false;
 
-		this.controlFormEle = document.querySelector(this.controlFormSelector);
+		this.mainFormSelector = option.mainSelector ? option.mainSelector : this.defaultMainPrefix + "control";
 
-		this.submitFormId = document.querySelector(this.controlFormSelector).getAttribute("id");
+		this.mainFormEle = document.querySelector(this.mainFormSelector);
 
-		this.remoteFormSelector = option.remoteSelector
-			? option.remoteSelector.form
-				? option.remoteSelector.form
-				: this.defaultRemotePrefix + "control"
-			: this.defaultRemotePrefix + "control";
+		this.submitFormId = document.querySelector(this.mainFormSelector).getAttribute("id");
+
+		this.remoteFormSelector = option.remoteSelector ? option.remoteSelector : this.defaultRemotePrefix + "control";
 
 		this.remoteFormEle = document.querySelectorAll(this.remoteFormSelector);
 
-		this.triggerFormSubmitSelector = option.submitSelector ? option.submitSelector : this.defaultMainPrefix + "submit";
+		this.triggerFormSubmitSelector = option.submitSelector ? option.submitSelector : this.mainFormSelector + "--submit";
 
-		this.controlEle = this.controlFormEle.querySelectorAll(".ladi-element .ladi-form-item");
+		this.mainEle = this.mainFormEle.querySelectorAll(".ladi-element .ladi-form-item");
 
-		this.inputControlEle = [];
+		this.inputMainEle = [];
 
-		for (const element of this.controlEle) {
+		for (const element of this.mainEle) {
 			const { tag, ele } = this.getInput(element);
-			// console.log(tag, ele);
+			const isRequired = ele[0].required;
 			const name = ele[0].getAttribute("name");
-			this.inputControlEle.push({ tag, name, ele, value: "" });
+			const className = ele[0].closest(".ladi-form .ladi-element").getAttribute("class");
+			const cleanClassName = className.replace("ladi-element ", "");
+			this.inputMainEle.push({ tag, name, isRequired, ele, className: "." + cleanClassName, value: "" });
 		}
-
+		console.log(this.inputMainEle);
 		this.inputRemoteEle = [];
-		for (const item of this.inputControlEle) {
-			const elements = document.querySelectorAll(`${this.remoteFormSelector} *[name="${item.name}"]`);
-			// console.log(elements);
-			if (elements.length > 0) {
-				this.inputRemoteEle.push({ tag: item.tag, name: item.name, ele: elements });
+		if (this.controlWithClass) {
+			for (const item of this.inputMainEle) {
+				const elements = document.querySelectorAll(`${this.remoteFormSelector} ${item.className}`);
+				const eleDom = [];
+				for (const element of elements) {
+					const { ele } = this.getInput(element);
+					if (elements.length > 0) {
+						eleDom.push(...ele);
+					}
+				}
+
+				console.log(eleDom);
+				if (elements.length > 0) {
+					this.inputRemoteEle.push({ tag: item.tag, name: item.name, ele: eleDom });
+				}
+			}
+		} else {
+			for (const item of this.inputMainEle) {
+				const elements = document.querySelectorAll(`${this.remoteFormSelector} *[name="${item.name}"]`);
+				// console.log(elements);
+				if (elements.length > 0) {
+					this.inputRemoteEle.push({ tag: item.tag, name: item.name, ele: elements });
+				}
 			}
 		}
 
-		// console.log(this.inputControlEle);
-
-		this.defaultSelector = {
-			fullName: "full_name",
-			phone: "phone",
-			email: "email",
-			classId: "classid",
-			age: "age",
-			scores: "scores",
-			product: "product",
-			gift: "gift",
-			timeSlot: "timeslot",
-			address: "address",
-			note1: "note1",
-			note2: "note2",
-			note3: "note3",
-			note4: "note4",
-			note5: "note5",
-			isStudent: "is_student",
-			itemProductType: "item_product_type",
-			itemPrice: "item_price",
-			itemProductId: "item_product_id",
-			returnUrlTrue: "return_url_true",
-			landingPageId: "landing_page_id",
-			returnUrlFalse: "return_url_false",
-			amount: "amount",
-			voucherCode: "voucher_code",
-			ldp: "ldp",
-			utmCampaign: "utm_campaign",
-			utmMedium: "utm_medium",
-			line: "line",
-		};
-
+		// console.log(this.inputMainEle);
 		this.cacheValue = [];
 
-		this.controlSelector = {};
+		this.mainSelector = {};
 		this.remoteSelector = {};
 
-		this.controlFormName = {};
+		this.mainFormName = {};
 
 		this.switchSelector = [];
 		this.switchData = [];
@@ -90,7 +72,7 @@ class ladiFormControl {
 		this.cacheTextSubmit = document.querySelector(`#${this.submitFormId} .ladi-button .ladi-headline`).innerText;
 
 		this.addChangeEvent();
-		this.addSubmitMainFormEvent();
+		// this.addSubmitMainFormEvent();
 	}
 
 	addChangeEvent() {
@@ -98,22 +80,22 @@ class ladiFormControl {
 			for (const ele of input.ele) {
 				ele.addEventListener("change", (e) => {
 					const value = e.target.value;
-					const index = this.inputControlEle.findIndex((item) => item.name === input.name);
+					const index = this.inputMainEle.findIndex((item) => item.name === input.name);
 					// console.log(value);
-					this.inputControlEle[index].value = e.target.value;
-					for (const controlInput of this.inputControlEle[index].ele) {
+					this.inputMainEle[index].value = e.target.value;
+					for (const mainInput of this.inputMainEle[index].ele) {
 						if (input.tag === "checkbox" || input.tag === "radio") {
-							if (controlInput.value === value) {
-								console.log(controlInput.value);
-								controlInput.checked = true;
-								controlInput.parentNode.querySelector("span").setAttribute("data-checked", true);
+							if (mainInput.value === value) {
+								console.log(mainInput.value);
+								mainInput.checked = true;
+								mainInput.parentNode.querySelector("span").setAttribute("data-checked", true);
 							} else {
-								controlInput.parentNode.querySelector("span").setAttribute("data-checked", false);
+								mainInput.parentNode.querySelector("span").setAttribute("data-checked", false);
 							}
 						} else {
-							controlInput.value = value;
+							mainInput.value = value;
 						}
-						// console.log(controlInput)
+						// console.log(mainInput)
 					}
 					this.updateAllValue(input.name, value);
 				});
@@ -121,7 +103,10 @@ class ladiFormControl {
 		}
 	}
 
-	addSubmitMainFormEvent() {
+	addSubmitMainFormEvent(selector) {
+		if (selector) {
+			this.triggerFormSubmitSelector = selector;
+		}
 		const selectors = document.querySelectorAll(this.triggerFormSubmitSelector);
 
 		const submitBtn = document.querySelector(`#${this.submitFormId} .ladi-button`).parentNode;
@@ -242,7 +227,7 @@ class ladiFormControl {
 
 	changeDataSwitch(name) {
 		// console.log(this.defaultSelector)
-		const input = this.inputControlEle.find((item) => item.name === name);
+		const input = this.inputMainEle.find((item) => item.name === name);
 		const value = input.ele[0].value;
 
 		const get = this.switchData.filter((data) => data.name === name);
@@ -272,7 +257,6 @@ class ladiFormControl {
 		}
 	}
 
-	getRequired() {}
 	checkValidate() {}
 }
 
@@ -486,7 +470,7 @@ class ladiTabControl {
 		// for (const boxTab of this.boxTabEle) {
 		// 	boxTab.addEventListener("click", () => changeAllValue(""));
 		// }
-		
+
 		const changeTabWithValue = (value) => {
 			changeAllValue(value);
 			for (const boxTab of this.tabGroupData) {
